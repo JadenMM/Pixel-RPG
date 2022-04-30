@@ -20,4 +20,9 @@ public class QuestDatabase : MonoBehaviour
         }
 
     }
+
+    public static List<Quest> GetQuestsForNPC(NPCInformation npc)
+    {
+        return Quests.Values.Where(q => q.QuestGiver.ID == npc.ID).ToList();
+    }
 }

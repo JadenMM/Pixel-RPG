@@ -24,8 +24,8 @@ public class PreferencesManager : MonoBehaviour
         RIGHT = KeyCode.D,
         MENU_INVENTORY = KeyCode.E,
         MENU_ESC = KeyCode.Escape,
-        MENU_CONTAINER = KeyCode.Q, // TESTING PURPOSES
-        RESTART_SCENE = KeyCode.F, // TESTING PURPOSES
+        OPEN_CONTAINER = KeyCode.Q,
+        INTERACT = KeyCode.F,
         NONE,
     }
 

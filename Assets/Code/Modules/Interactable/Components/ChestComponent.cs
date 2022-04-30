@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using static PreferencesManager;
 
-public class Interactable : MonoBehaviour
+public class ChestComponent : Interactable
 {
-    public GameAction Action;
-    public string InteractText;
+    public Inventory Inventory;
 }

@@ -63,6 +63,7 @@ public class UIInventoryManager : MonoBehaviour
         ContainerInventoryPanel.SetActive(false);
 
         PlayerInventoryPanel.gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        PlayerInventoryPanel.Hide();
     }
 
     public void SetPlayerInventory(UIInventory uIInventory)
@@ -255,9 +256,9 @@ public class UIInventoryManager : MonoBehaviour
         slot.InventoryItem = invItem;
     }
 
-    public InventoryItemComponent CreateInventoryItemComponent(InventorySlotComponent slot, ItemStack itemStack)
+    public InventoryItemComponent CreateInventoryItemComponent (Transform location, ItemStack itemStack)
     {
-        var invItem = Instantiate(ItemPrefab, slot.gameObject.transform).GetComponent<InventoryItemComponent>();
+        var invItem = Instantiate(ItemPrefab, location).GetComponent<InventoryItemComponent>();
 
         invItem.ItemStack = itemStack;
         invItem.SetTexture(itemStack.Item.InventoryIcon);
@@ -265,6 +266,11 @@ public class UIInventoryManager : MonoBehaviour
         invItem.gameObject.name = itemStack.Item.ID;
 
         return invItem;
+    }
+
+    public InventoryItemComponent CreateInventoryItemComponent(InventorySlotComponent slot, ItemStack itemStack)
+    {
+        return CreateInventoryItemComponent(slot.gameObject.transform, itemStack);
     }
 
     public GameObject CreateSlot(Inventory inventory)

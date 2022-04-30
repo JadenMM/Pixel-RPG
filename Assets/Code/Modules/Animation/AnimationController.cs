@@ -78,7 +78,7 @@ public class AnimationController : MonoBehaviour
                 currentFrame = 0;
             }
 
-            Debug.Log($"[{animatedSprite.Slot}] SETTING FRAME: {currentFrame} WITH ANIMATION {animation}");
+            //Debug.Log($"[{animatedSprite.Slot}] SETTING FRAME: {currentFrame} WITH ANIMATION {animation}");
             animatedSprite.SetFrame(animation, currentFrame);
             yield return new WaitForSeconds(animatedSprite.Animations[animation].AnimationLength/animatedSprite.Animations[animation].Frames.Count);
         }

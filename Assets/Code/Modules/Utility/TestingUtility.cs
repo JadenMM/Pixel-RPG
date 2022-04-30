@@ -24,8 +24,5 @@ public class TestingUtility : MonoBehaviour
         if (Input.GetKeyDown(PreferencesManager.GetKeybind(PreferencesManager.GameAction.MENU_ESC)))
             Application.Quit();
 
-        if (Input.GetKeyDown(PreferencesManager.GetKeybind(PreferencesManager.GameAction.RESTART_SCENE)))
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex, LoadSceneMode.Single);
-
     }
 }

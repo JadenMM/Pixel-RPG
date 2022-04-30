@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ public class NPC : Character
 
     public NPCInformation NPCInformation;
     public List<Quest> Quests;
-    public GameObject StatusIcon;
+    public GameObject StatusIconObject;
 
 
     public override void OnAwake()
@@ -23,9 +24,11 @@ public class NPC : Character
             return;
         }
 
-        Quests = new List<Quest>();
-
+        // Adds NPC to the NPC database of active NPCs
         NPCDatabase.ActiveNPCs.Add(NPCInformation, this);
+
+        // Quests the NPC is eligible to give.
+        Quests = QuestDatabase.GetQuestsForNPC(NPCInformation);
 
         int i = Enum.GetValues(typeof(AnimatedSpriteSlot)).Length;
         foreach (AnimatedSpriteSlot slot in Enum.GetValues(typeof(AnimatedSpriteSlot)))
@@ -54,10 +57,23 @@ public class NPC : Character
 
     public override void OnStart()
     {
-        if (Quests.Count > 1)
+        ChooseStatusIcon();
+    }
+
+    public void ChooseStatusIcon()
+    {
+        if (Quests.ActiveQuestsWithNPC(NPCInformation).CompletedQuests().Count >= 1)
         {
-            StatusIcon.SetActive(true);
+            SetStatusIcon(StatusIcon.QUEST_COMPLETE);
+            return;
         }
+        else if (Quests.EligibleQuests().Count >= 1)
+        {
+            SetStatusIcon(StatusIcon.QUEST_AVAILABLE);
+            return;
+        }
+
+        SetStatusIcon(StatusIcon.NONE);
     }
 
     private GameObject CreateAnimatedSpriteSlot(AnimatedSpriteSlot slot, int layer)
@@ -73,6 +89,18 @@ public class NPC : Character
         spriteRenderer.sortingOrder = layer;
 
         return obj;
+    }
+
+    public void SetStatusIcon(StatusIcon status)
+    {
+        if (status is StatusIcon.NONE)
+        {
+            StatusIconObject.SetActive(false);
+            return;
+        }
+
+        StatusIconObject.SetActive(true);
+        StatusIconObject.GetComponent<SpriteRenderer>().sprite = IconDatabase.StatusIcons[status];
     }
 
 }

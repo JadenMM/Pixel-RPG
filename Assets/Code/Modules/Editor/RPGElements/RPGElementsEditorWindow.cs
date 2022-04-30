@@ -28,6 +28,7 @@ public class RPGElementsEditorWindow : OdinMenuEditorWindow
 
         tree.AddAllAssetsAtPath("Customization", "Assets/Resources/Customization", typeof(CustomizationElement), true);
         tree.AddAllAssetsAtPath("Items", "Assets/Resources/Items", typeof(Item), true);
+        tree.AddAllAssetsAtPath("Quests", "Assets/Resources/Quests", typeof(Quest), true);
         
 
         return tree;
@@ -53,6 +54,7 @@ public class RPGElementsEditorWindow : OdinMenuEditorWindow
 
                 menu.AddItem(new GUIContent("Item"), false, OnCreateSelected, "Item");
                 menu.AddItem(new GUIContent("Customization"), false, OnCreateSelected, "Customization");
+                menu.AddItem(new GUIContent("Quests"), false, OnCreateSelected, "Quest");
 
                 menu.ShowAsContext();
             }
@@ -83,6 +85,14 @@ public class RPGElementsEditorWindow : OdinMenuEditorWindow
         else if ((string) tag == "Customization")
         {
             ScriptableObjectCreator.ShowDialog<CustomizationElement>("Assets/Resources/Customization", obj =>
+            {
+                obj.ID = obj.name;
+                TrySelectMenuItemWithObject(obj); // Selects the newly created item in the editor
+            });
+        }
+        else if ((string)tag == "Quest")
+        {
+            ScriptableObjectCreator.ShowDialog<CustomizationElement>("Assets/Resources/Quests", obj =>
             {
                 obj.ID = obj.name;
                 TrySelectMenuItemWithObject(obj); // Selects the newly created item in the editor

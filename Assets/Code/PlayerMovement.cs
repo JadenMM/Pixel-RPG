@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using static PreferencesManager;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -7,7 +8,6 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody2D Body;
 
     private Vector2 movement;
-    private int lastDirection;
 
     // Update is called once per frame
     void Update()
@@ -16,11 +16,11 @@ public class PlayerMovement : MonoBehaviour
         float x = 0;
         float y = 0;
 
-        x += Input.GetKey(PreferencesManager.GetKeybind(PreferencesManager.GameAction.RIGHT)) ? 1 : 0;
-        x -= Input.GetKey(PreferencesManager.GetKeybind(PreferencesManager.GameAction.LEFT)) ? 1 : 0;
+        x += Input.GetKey(GetKeybind(GameAction.RIGHT)) ? 1 : 0;
+        x -= Input.GetKey(GetKeybind(GameAction.LEFT)) ? 1 : 0;
 
-        y += Input.GetKey(PreferencesManager.GetKeybind(PreferencesManager.GameAction.FORWARD)) ? 1 : 0;
-        y -= Input.GetKey(PreferencesManager.GetKeybind(PreferencesManager.GameAction.BACK)) ? 1 : 0;
+        y += Input.GetKey(GetKeybind(GameAction.FORWARD)) ? 1 : 0;
+        y -= Input.GetKey(GetKeybind(GameAction.BACK)) ? 1 : 0;
 
         movement = new Vector2();
 
@@ -42,9 +42,8 @@ public class PlayerMovement : MonoBehaviour
             Player.AnimationController.StartAnimation(AnimationType.WALK_DOWN);
 
         if (movement.magnitude <= 0)
-        {
             Player.AnimationController.SetIdleAnimation();
-        }
+
     }
 
     void FixedUpdate()

@@ -41,16 +41,61 @@ public class Inventory : MonoBehaviour
 
     private ItemStack GetItemStack(string itemID)
     {
+        return GetItemStacks(itemID)[0];
+    }
 
-        ItemStack itemStack = null;
+    public List<ItemStack> GetItemStacksForQuantity(string itemID, int quantity)
+    {
+        List<ItemStack> list = new List<ItemStack>();
 
-        try
+        int currentQuantity = 0;
+
+        foreach (ItemStack item in InventoryItems.Values.Where(i => i.Item.ID == itemID))
         {
-            InventoryItems.Values.Where(i => i.Item.ID == itemID).FirstOrDefault();
-        }
-        catch { }
+            if (currentQuantity == quantity)
+                break;
 
-        return itemStack;
+            if (item.Quantity < quantity - currentQuantity)
+            {
+                currentQuantity += item.Quantity;
+            }
+            else
+            {
+                currentQuantity += quantity - currentQuantity;
+            }
+
+            list.Add(item);
+        }
+
+        return list;
+    }
+
+    public List<ItemStack> GetItemStacks(string itemID)
+    {
+        return InventoryItems.Values.Where(i => i.Item.ID == itemID).ToList();
+    }
+
+    public bool HasItem(string itemID, int quantity = 1)
+    {
+        return HasItem(ItemDatabase.GameItems[itemID], quantity);
+    }
+
+    public bool HasItem(Item item, int quantity = 1)
+    {
+
+        return GetItemAmount(item) >= quantity;
+    }
+
+    public int GetItemAmount(Item item)
+    {
+        int amount = 0;
+
+        foreach (ItemStack itemStack in InventoryItems.Values.Where(i => i.Item == item))
+        {
+            amount += itemStack.Quantity;
+        }
+
+        return amount;
     }
 
     private int GetSlot(ItemStack itemStack)
@@ -74,9 +119,19 @@ public class Inventory : MonoBehaviour
             InventoryItems.Remove(slot);
         }
         else
+        {
             InventoryItems[slot] = itemStack;
+            GameManager.instance.QuestManager.QuestTracker.CheckTrackedItem(itemStack.Item);
+        }
 
         Debug.Log($"Set slot: {slot} to {itemStack}.");
+    }
+
+    public void SetItemStackQuantity(ItemStack itemStack, int quantity)
+    {
+        itemStack.Quantity = quantity;
+
+        GameManager.instance.QuestManager.QuestTracker.CheckTrackedItem(itemStack.Item);
     }
 
     #region Adding Items
@@ -94,6 +149,7 @@ public class Inventory : MonoBehaviour
     public void AddItem(ItemStack itemStack, int slot)
     {
         InventoryItems[slot] = itemStack;
+        
     }
 
     public void AddItem(ItemStack itemStack)
@@ -103,9 +159,20 @@ public class Inventory : MonoBehaviour
     #endregion
 
     #region Removing Items
-    public void RemoveItem(string type)
+    public void RemoveItem(string type, int quantity = 1)
     {
-        RemoveItem(GetItemStack(type));
+        if (quantity < 0)
+        {
+            RemoveItems(GetItemStacks(type));
+            return;
+        }
+
+        RemoveItems(GetItemStacksForQuantity(type, quantity), quantity);
+    }
+
+    public void RemoveItem(Item item, int quantity = 1)
+    {
+        RemoveItem(item.ID, quantity);
     }
 
     public void RemoveItem(ItemStack itemStack)
@@ -117,7 +184,52 @@ public class Inventory : MonoBehaviour
     public void RemoveItem(int slot)
     {
         if (InventoryItems.ContainsKey(slot))
-            InventoryItems.Remove(slot);
+        {
+            GameManager.instance.QuestManager.QuestTracker.CheckTrackedItem(InventoryItems[slot].Item);
+            SetSlot(slot, null);
+        }
+    }
+
+    public void RemoveItems(params ItemStack[] itemStack)
+    {
+        foreach (ItemStack item in itemStack)
+            RemoveItem(item);
+    }
+
+    public void RemoveItems(List<ItemStack> itemStack)
+    {
+        foreach (ItemStack item in itemStack)
+            RemoveItem(item);
+    }
+
+    public void RemoveItems(List<ItemStack> itemStack, int quantity)
+    {
+
+        int currentQuantity = 0;
+
+        List<ItemStack> listToRemove = new();
+
+        foreach (ItemStack item in itemStack)
+        {
+            if (currentQuantity == quantity)
+                break;
+
+            int difference = quantity - currentQuantity;
+
+            if (item.Quantity <= difference)
+            {
+                currentQuantity += item.Quantity;
+                listToRemove.Add(item);
+            }
+            else
+            {
+                currentQuantity += difference;
+                SetItemStackQuantity(item, quantity - difference);
+            }
+        }
+
+        RemoveItems(listToRemove);
+
     }
     #endregion
 

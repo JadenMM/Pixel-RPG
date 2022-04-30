@@ -5,8 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class ChestComponent : Interactable
+public class InteractableCharacterComponent : Interactable
 {
-
-    public Inventory Inventory;
+    public NPC NPC;
 }

@@ -8,7 +8,7 @@ public class ItemStack
 {
 
     public Item Item { get; private set; }
-    public int Quantity { get; private set; }
+    public int Quantity { get; set; }
 
     public ItemStack(Item item, int quantity)
     {
