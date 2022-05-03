@@ -7,8 +7,9 @@ using UnityEngine;
 public class Player : Character
 {
 
-    public Dictionary<GameObject, Interactable> Interactables;
+    public MovementController MovementController;
 
+    public Dictionary<GameObject, Interactable> Interactables;
 
     public override void OnStart()
     {
@@ -17,6 +18,8 @@ public class Player : Character
 
     public void Update()
     {
+
+        // Containers
         if (Input.GetKeyDown(PreferencesManager.GetKeybind(PreferencesManager.GameAction.OPEN_CONTAINER)))
         {
             if (GameManager.instance.UIInventoryManager.ContainerInventoryPanel.activeInHierarchy)
@@ -25,6 +28,7 @@ public class Player : Character
                 GameManager.instance.UIInventoryManager.OpenContainer(FindChest().Inventory);
         }
 
+        // Interaction
         if (Input.GetKeyDown(PreferencesManager.GetKeybind(PreferencesManager.GameAction.INTERACT)))
         {
             if (GameManager.instance.UIManager.QuestGiverPanel.isActiveAndEnabled)

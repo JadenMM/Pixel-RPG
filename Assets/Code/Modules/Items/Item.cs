@@ -1,11 +1,19 @@
 ﻿using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Elements/Item")]
 public class Item : ScriptableObject
 {
+
+    // Animation Range Values
+    private const int WALK_START_RANGE = 60;
+    private const int WALK_FRAMES_AMOUNT = 9;
+    private const int SWING_START_RANGE = 96;
+    private const int SWING_FRAMES_AMOUNT = 6;
 
     protected const string LEFT_GROUP                           = "Split/Left";
     protected const string RIGHT_GROUP                          = "Split/Right";
@@ -56,6 +64,56 @@ public class Item : ScriptableObject
     [HideLabel, TextArea(4, 9)]
     public string Description;
 
+
+    [VerticalGroup(LEFT_GROUP)]
+    [ShowIf("@this.Type == ItemType.EQUIPMENT || this.Type == ItemType.TOOL")]
+    [BoxGroup(LEFT_GROUP + "/Animation")]
+    public Texture2D SpriteSheet;
+
+    [VerticalGroup(LEFT_GROUP)]
+    [ShowIf("@this.Type == ItemType.EQUIPMENT || this.Type == ItemType.TOOL")]
+    [BoxGroup(LEFT_GROUP + "/Animation")]
+    [Button]
+    public void AutoSortAnimation()
+    {
+
+        AnimationGlobals globals = (AnimationGlobals) AssetDatabase.LoadAssetAtPath("Assets/AnimationGlobals.asset", typeof(AnimationGlobals));
+
+        if (globals is null)
+        {
+            Debug.LogError("Couldn't load animation globals");
+            return;
+        }
+
+        var path = AssetDatabase.GetAssetPath(SpriteSheet);
+        Sprite[] sprites = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().ToArray();
+
+        Debug.Log(sprites.Length);
+
+        AnimationData.Clear();
+
+        foreach(AnimationGroup group in Enum.GetValues(typeof(AnimationGroup)))
+        {
+            var startRange = globals.StartRanges[group];
+
+            for (int i = 0; i < 4; i++)
+            {
+                var animation = new Animation();
+                animation.AnimationType = (AnimationType)group + i;
+                animation.AnimationLength = globals.AnimationLengths[group];
+
+                int frameCount = globals.FrameCounts[group];
+                for (int f = 0; f < frameCount; f++)
+                {
+                    var index = startRange + (i*frameCount) + f;
+                    animation.Frames.Add(sprites[index]);
+                }
+                AnimationData.Add(animation);
+            }
+            
+        }
+    }
+
     [VerticalGroup(LEFT_GROUP)]
     [ShowIf("@this.Type == ItemType.EQUIPMENT || this.Type == ItemType.TOOL")]
     [BoxGroup(LEFT_GROUP + "/Animation")]
@@ -66,5 +124,6 @@ public class Item : ScriptableObject
     private static EquipmentSlot[] equipmentSlots = (EquipmentSlot[]) Enum.GetValues(typeof(EquipmentSlot));
     private static ToolSlot[] toolSlots = (ToolSlot[]) Enum.GetValues(typeof(ToolSlot));
     private static AnimatedSpriteSlot[] animationSlots = (AnimatedSpriteSlot[]) Enum.GetValues(typeof(AnimatedSpriteSlot));
+
 
 }

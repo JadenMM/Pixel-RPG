@@ -12,4 +12,9 @@ public class Animation
     public AnimationType AnimationType;
     public List<Sprite> Frames;
     public float AnimationLength;
+
+    public Animation()
+    {
+        Frames = new List<Sprite>();
+    }
 }

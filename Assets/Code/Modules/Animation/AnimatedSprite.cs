@@ -38,7 +38,7 @@ public class AnimatedSprite : MonoBehaviour
 
         if (!Animations.ContainsKey(anim))
             return;
-
+            
         if (Animations[anim].Frames.Count == 0)
             return;
 
@@ -47,9 +47,14 @@ public class AnimatedSprite : MonoBehaviour
 
         var frame = Animations[anim].Frames[id];
 
-        if (frame == null)
-            return;
+        var colour = new Color(SpriteRenderer.color.r, SpriteRenderer.color.g, SpriteRenderer.color.b, 1);
 
+        if (frame == null)
+        {
+            colour.a = 0;
+        }
+
+        SpriteRenderer.color = colour;
         SpriteRenderer.sprite = frame;
     }
 

@@ -10,6 +10,7 @@ public class Character : MonoBehaviour
 
     public Inventory Inventory;
     public AnimationController AnimationController;
+    public CombatController CombatController;
 
     public float Speed = 5f;
     public float Health = 100f;
